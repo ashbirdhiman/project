@@ -14,17 +14,51 @@
 		http://www.springframework.org/schema/integration/file http://www.springframework.org/schema/integration/file/spring-integration-file-4.2.xsd
 		http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp-4.2.xsd
 		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-4.2.xsd">
-<int:gateway service-interface="com.training.project.jdbc.personGateway"
-             default-request-channel="inboundChanel"/>
+    <int:gateway service-interface="com.training.project.jdbc.personGateway"
+                 default-request-channel="inboundChanel"/>
 
-<!--<int-jdbc:outbound-channel-adapter-->
-            <!--channel="inboundChanel"-->
-            <!--data-source="dataSource"-->
-            <!--query="insert into person values(:payload.id,:payload.firstName,:payload.lastName)"/>-->
+        <int:gateway service-interface="com.training.project.jdbc.PrintGateway"
+                     default-request-channel="printInChannel"/>
 
+    <jdbc:embedded-database type="H2" id="dataSource" database-name="nameourDB">
+        <jdbc:script execution="INIT"/>
+
+    </jdbc:embedded-database>
+
+    <int-jdbc:outbound-channel-adapter
+            channel="inboundChanel"
+            data-source="dataSource"
+            query="create table person(
+	person_id int primary key,
+	first_name varchar,
+	last_name varchar
+);"/>
+    <int-jdbc:outbound-channel-adapter
+            channel="inboundChanel"
+            data-source="dataSource"
+            query=" insert into person values(:payload.id,:payload.firstName,:payload.lastName);"/>
+
+
+    <int:channel id="printInChannel"/>
     <int:channel id="inboundChanel"/>
-<!--<jdbc:embedded-database type="H2" id="dataSource">-->
-    <!--<jdbc:script location="init.sql"/>-->
-<!--</jdbc:embedded-database>-->
+    <int:channel id="jdbcChannel"/>
+
+
+
+    <bean class="com.training.project.jdbc.printValues" id="values"/>
+
+    <int:service-activator ref="values" method="values" input-channel="printInChannel"/>
+
+    <bean class="com.training.project.jdbc.printService" id="printService"/>
+
+    <int:service-activator ref="printService" method="print" input-channel="jdbcChannel"/>
+
+
+
+    <int-jdbc:inbound-channel-adapter data-source="dataSource"
+                                      query="select * from person"
+                                      channel="printInChannel">
+    <int:poller fixed-rate="4000"/>
+    </int-jdbc:inbound-channel-adapter>
 
 </beans>

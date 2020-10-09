@@ -3,13 +3,18 @@
 <body>
 <h2>Enter Details </h2>
 <form action="/rest" method="get">
+    <label for="id">Identity No:</label><br>
+    <input type="text" id="id" name="id" ><br><br>
     <label for="firstName">First name:</label><br>
     <input type="text" id="firstName" name="firstName" ><br>
     <label for="lastName">Last name:</label><br>
     <input type="text" id="lastName" name="lastName" ><br><br>
+
     <input type="submit" value="Submit">
 </form>
 
-
+<form action="/values" method="get">
+    <input type="submit" value="Get Information">
+</form>
 </body>
 </html>

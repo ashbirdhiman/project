@@ -6,6 +6,9 @@
         <fileset id="fileset" name="Context" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/context.xml</file>
         </fileset>
+        <fileset id="fileset2" name="DispatcherServlet Servlet" removed="false">
+          <file>file://$MODULE_DIR$/src/main/WEB-INF/dispatcherServlet-servlet.xml</file>
+        </fileset>
       </configuration>
     </facet>
     <facet type="web" name="Web">
